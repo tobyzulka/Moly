@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clipToPadding="false"
+    android:padding="10dp">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_genre"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:cardBackgroundColor="?attr/colorTertiaryContainer"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="5dp">
+        <TextView
+            android:id="@+id/text_title"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:textColor="?attr/colorOnTertiaryContainer"
+            android:gravity="center"
+            android:padding="12dp"
+            android:textStyle="bold"
+            tools:text="Genre Name" />
+    </androidx.cardview.widget.CardView>
+</FrameLayout>

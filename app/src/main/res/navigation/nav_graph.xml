@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_home">
+
+    <fragment
+        android:id="@+id/navigation_home"
+        android:name="dev.byto.moly.ui.screen.home.HomeFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_view_all"
+            app:destination="@id/navigation_view_all" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_view_all"
+        android:name="dev.byto.moly.ui.screen.list.ViewAllFragment"
+        android:label="@string/title_view_all"
+        tools:layout="@layout/fragment_view_all" >
+        <action
+            android:id="@+id/action_navigation_view_all_to_navigation_detail"
+            app:destination="@id/navigation_detail" />
+        <argument
+            android:name="genreId"
+            android:defaultValue="0"
+            app:argType="integer"
+            app:nullable="false" />
+        <argument
+            android:name="genreName"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_detail"
+        android:name="dev.byto.moly.ui.screen.detail.DetailFragment"
+        android:label="@string/title_detail"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="movie_id"
+            android:defaultValue="0"
+            app:argType="integer"
+            app:nullable="false" />
+    </fragment>
+</navigation>
