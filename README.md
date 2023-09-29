@@ -75,6 +75,7 @@ dev.byto.moly           # Root Package
 |   |   ├── list        # List screen Fragment and ViewModel
 |   |   └── MainActivity# Single activity
 |   └── UiState         # UI State response
+| 
 ├── utils               # Utility Classes / Kotlin extensions
 └── MainApp             # Application
 
@@ -95,8 +96,6 @@ private const val API_KEY = "\"5423as******************655\""
 ```
 * Add the key to build config in `./app/src/main/java/dev/byto/moly/di/NetworkModule.kt`:
 * Perform gradle sync.
-
-> **NOTE**: It's important to keep the double quotes for this value, since it's used as String type build config fields, the field name in quotes, the field value in escaped quotes additionally. If you're missing the double quotes, it will build fail.
 
 ## LICENSE
 
