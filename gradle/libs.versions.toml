@@ -64,7 +64,6 @@ timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 glide-transform = { module = "jp.wasabeef:glide-transformations", version.ref = "glide-transform" }
-expandablelayout = { module = "com.github.cachapa:ExpandableLayout", version.ref = "expandablelayout" }
 viewbinding = { module = "com.github.kirich1409:viewbindingpropertydelegate-full", version.ref = "viewbinding" }
 desugar = { module = "com.android.tools:desugar_jdk_libs", version.ref = "desugar" }
 multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
@@ -89,6 +88,6 @@ io = [
 ]
 thirdParty = [
     "coil", "glide", "glide-transform", "multidex", "klock", "youtube-player", "expandable",
-    "expandablelayout", "viewbinding", "hilt"
+    "viewbinding", "hilt"
 ]
 logs = ["logger", "timber"]
