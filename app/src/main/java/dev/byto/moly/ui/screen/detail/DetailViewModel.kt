@@ -20,13 +20,11 @@ class DetailViewModel @Inject constructor(
 
     private val _details = MutableStateFlow(MovieDetail.empty)
     val details get() = _details.asStateFlow()
-    private val appendTo: String = ""
 
     private fun fetchMovieDetails() {
         viewModelScope.launch {
             getDetails(
                 movieId = detailId,
-//                appendTo = appendTo
             ).collect { response ->
                 when (response) {
                     is ResultWrapper.Success -> {

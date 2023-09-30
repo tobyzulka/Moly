@@ -1,8 +1,6 @@
 package dev.byto.moly.ui.screen.detail
 
-import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -18,8 +16,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.byto.moly.R
 import dev.byto.moly.databinding.FragmentDetailBinding
-import dev.byto.moly.domain.model.Image
-import dev.byto.moly.domain.model.Review
 import dev.byto.moly.ui.adapter.CastAdapter
 import dev.byto.moly.ui.adapter.ImageAdapter
 import dev.byto.moly.ui.adapter.ReviewAdapter
@@ -48,8 +44,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private lateinit var adapterReviews: ReviewAdapter
 
     private var snackbar: Snackbar? = null
-    private var listReviews: List<Review> = emptyList()
-    private var listImages: List<Image> = emptyList()
 
     private var movieId: Int? = null
 
@@ -71,21 +65,8 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                 ::collectUiState
             )
         )
-        setEmptyList()
         binding.buttonBack.setSafeOnClickListener {
             findNavController().navigateUp()
-        }
-    }
-
-    private fun setEmptyList() {
-        if (listReviews.isEmpty()) {
-            binding.rvReviews.visibility = View.GONE
-            binding.labelNoReview.visibility = View.VISIBLE
-        }
-
-        if (listImages.isEmpty()) {
-            binding.rvImage.visibility = View.GONE
-            binding.labelNoImage.visibility = View.VISIBLE
         }
     }
 
@@ -123,13 +104,21 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private suspend fun collectMovieDetails() {
         viewModel.details.collect { details ->
             binding.cgGenres.setGenreChips(details.genres)
+
+            val titleVideos = "Trailers (${details.videos.filterVideos().size})"
+            binding.headingTrailer.text = titleVideos
             adapterVideos.submitList(details.videos.filterVideos())
+
+            val titleCast = "Review (${details.credits.cast.size})"
+            binding.headingCast.text = titleCast
             adapterCast.submitList(details.credits.cast)
 
-            listReviews = details.review.results
+            val titleReview = "Review (${details.review.results.size})"
+            binding.headingReview.text = titleReview
             adapterReviews.submitList(details.review.results)
 
-            listImages = details.images.backdrops!!
+            val titleImage = "Images (${details.images.backdrops?.size})"
+            binding.headingImage.text = titleImage
             adapterImages.submitList(details.images.backdrops)
 
             binding.detailsBannerImage.loadImage(
@@ -182,11 +171,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                 }
             }
         }
-    }
-
-    private fun isDarkModeOn(): Boolean {
-        val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
     }
 
     private fun showSnackbar(

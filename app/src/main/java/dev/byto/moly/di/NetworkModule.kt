@@ -26,6 +26,7 @@ object NetworkModule {
     private const val BASE_URL = "https://api.themoviedb.org/3/"
     private const val API_KEY = "bf819fcb4bdf2efe6e1e17b294cf2336"
     private const val QUERY_LANGUAGE = "en-US"
+    private const val INCLUDE_IMAGE = "en,null"
 
     private const val CACHE_SIZE = 1024 * 1024 * 10L // 10 MB
     private const val CACHE_MAX_AGE = 60 * 60  // 1 hour
@@ -63,6 +64,7 @@ object NetworkModule {
                 .newBuilder()
                 .addQueryParameter("api_key", API_KEY)
                 .addQueryParameter("language", QUERY_LANGUAGE)
+                .addQueryParameter("include_image_language", INCLUDE_IMAGE)
                 .build()
 
             val headerName = "Cache-Control"

@@ -2,7 +2,6 @@ package dev.byto.moly.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ListAdapter
@@ -10,9 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import dev.byto.moly.R
 import dev.byto.moly.databinding.ItemImageBinding
 import dev.byto.moly.domain.model.Image
-import dev.byto.moly.utils.getImageDiffUtils
-import dev.byto.moly.ui.adapter.ImageAdapter.*
+import dev.byto.moly.ui.adapter.ImageAdapter.ImageViewHolder
 import dev.byto.moly.utils.ImageQuality
+import dev.byto.moly.utils.getImageDiffUtils
 import dev.byto.moly.utils.loadImage
 
 class ImageAdapter(

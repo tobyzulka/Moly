@@ -30,8 +30,6 @@ data class MovieDetailDTO(
     val productionCompanies: List<CompanyDTO>,
     @SerializedName("production_countries")
     val productionCountries: List<CountryDTO>,
-    @SerializedName("recommendations")
-    val recommendations: MovieListDTO,
     @SerializedName("release_date")
     val releaseDate: String?,
     @SerializedName("revenue")
