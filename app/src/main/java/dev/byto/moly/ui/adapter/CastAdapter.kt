@@ -34,11 +34,13 @@ class CastAdapter(
         getItem(position).let { cast ->
             holder.view.apply {
                 textName.text = cast.name
-                val job = "${cast.character} (${cast.job})"
+                val job: String = if (cast.job != null)
+                    "${cast.character} (${cast.job})"
+                else "${cast.character}"
                 textJob.text = job
                 imagePerson.loadImage(
                     cast.profilePath, ImageQuality.LOW,
-                    circleCrop = true, fitTop = false, isThumbnail = false,
+                    circleCrop = false, fitTop = false, isThumbnail = false,
                     errorImage = ContextCompat.getDrawable(mContext!!, R.drawable.ic_person)
                 )
             }

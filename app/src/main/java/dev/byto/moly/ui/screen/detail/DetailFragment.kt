@@ -2,8 +2,8 @@ package dev.byto.moly.ui.screen.detail
 
 import android.content.res.Configuration
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,11 +14,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.byto.moly.R
 import dev.byto.moly.databinding.FragmentDetailBinding
-import dev.byto.moly.ui.adapter.ImageAdapter
+import dev.byto.moly.domain.model.Image
+import dev.byto.moly.domain.model.Review
 import dev.byto.moly.ui.adapter.CastAdapter
+import dev.byto.moly.ui.adapter.ImageAdapter
 import dev.byto.moly.ui.adapter.ReviewAdapter
 import dev.byto.moly.ui.adapter.VideoAdapter
 import dev.byto.moly.ui.screen.detail.dialog.VideoPlayerDialog
@@ -44,6 +47,10 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private lateinit var adapterImages: ImageAdapter
     private lateinit var adapterReviews: ReviewAdapter
 
+    private var snackbar: Snackbar? = null
+    private var listReviews: List<Review> = emptyList()
+    private var listImages: List<Image> = emptyList()
+
     private var movieId: Int? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -64,9 +71,21 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
                 ::collectUiState
             )
         )
-
+        setEmptyList()
         binding.buttonBack.setSafeOnClickListener {
             findNavController().navigateUp()
+        }
+    }
+
+    private fun setEmptyList() {
+        if (listReviews.isEmpty()) {
+            binding.rvReviews.visibility = View.GONE
+            binding.labelNoReview.visibility = View.VISIBLE
+        }
+
+        if (listImages.isEmpty()) {
+            binding.rvImage.visibility = View.GONE
+            binding.labelNoImage.visibility = View.VISIBLE
         }
     }
 
@@ -82,10 +101,12 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         binding.rvImage.let { rvImage->
             adapterImages = ImageAdapter(context)
             rvImage.setAdapterWithFixedSize(adapterImages, false)
+            rvImage.visibility = View.VISIBLE
         }
         binding.rvReviews.let { rvReviews->
             adapterReviews = ReviewAdapter(context)
             rvReviews.setAdapterWithFixedSize(adapterReviews, false)
+            rvReviews.visibility = View.VISIBLE
         }
     }
 
@@ -94,7 +115,6 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         movieId = args.movieId
     }
 
-
     private fun actionPlay(url: String) {
         val videoDialog = VideoPlayerDialog(url)
         videoDialog.show(childFragmentManager, "Video Dialog")
@@ -102,11 +122,16 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private suspend fun collectMovieDetails() {
         viewModel.details.collect { details ->
-            binding.cgGenres.setGenreChips(details.genres, isDarkModeOn())
+            binding.cgGenres.setGenreChips(details.genres)
             adapterVideos.submitList(details.videos.filterVideos())
             adapterCast.submitList(details.credits.cast)
-            adapterImages.submitList(details.images.backdrops)
+
+            listReviews = details.review.results
             adapterReviews.submitList(details.review.results)
+
+            listImages = details.images.backdrops!!
+            adapterImages.submitList(details.images.backdrops)
+
             binding.detailsBannerImage.loadImage(
                 details.backdropPath, ImageQuality.HIGH,
                 circleCrop = false, fitTop = false, isThumbnail = false,
@@ -120,19 +145,20 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
             binding.textMovieName.text = details.originalTitle
             binding.textOverview.text = details.overview
             binding.textReleaseDate.text = details.releaseDate.formatDate()
-            val rate = "%.1f".format(details.voteAverage)
+            val rate = String.format("%.1f", details.voteAverage)
             binding.textRating.text = rate
-            binding.ratingBar.rating = details.voteAverage.toFloat()
+            binding.ratingBar.rating = rate.toFloat()/2
             binding.textLength.text = details.runtime!!.toHours()
         }
     }
 
     private suspend fun collectUiState() {
         viewModel.uiState.collect { state ->
-            if (state.isError) {
-                Toast.makeText(context, state.errorText, Toast.LENGTH_SHORT).show()
+            if (state.isError) showSnackbar(
+                message = state.errorText!!, actionText = getString(R.string.retry)
+            ) {
                 viewModel.retryConnection {
-//                    viewModel.initRequests(movieId!!)
+                    viewModel.initRequests(movieId!!)
                 }
             }
         }
@@ -161,5 +187,28 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private fun isDarkModeOn(): Boolean {
         val nightModeFlags = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
+    }
+
+    private fun showSnackbar(
+        message: String,
+        indefinite: Boolean = true,
+        actionText: String? = null,
+        anchor: Boolean = false,
+        action: (() -> Unit)? = null
+    ) {
+        val view = activity?.window?.decorView?.rootView
+        val length = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
+        val snackbar = view?.let { Snackbar.make(it, message, length) }
+
+        if (action != null) snackbar?.setAction(actionText) { action() }
+        if (anchor) snackbar?.setAnchorView(R.id.nav_view)
+
+        this.snackbar = snackbar
+        this.snackbar?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        this.snackbar?.dismiss()
     }
 }

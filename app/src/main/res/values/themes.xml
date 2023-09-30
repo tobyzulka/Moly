@@ -31,6 +31,8 @@
 
     <style name="RatingBar" parent="Widget.AppCompat.RatingBar.Small">
         <item name="android:numStars">5</item>
+        <item name="android:enabled">false</item>
+        <item name="android:stepSize">0.01</item>
         <item name="android:isIndicator">true</item>
         <item name="android:progressTint">@color/yellow</item>
         <item name="android:progressBackgroundTint">@color/md_theme_light_secondary</item>

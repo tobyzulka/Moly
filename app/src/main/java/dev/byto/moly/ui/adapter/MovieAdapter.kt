@@ -15,7 +15,7 @@ import dev.byto.moly.utils.loadImage
 import dev.byto.moly.utils.setSafeOnClickListener
 
 class MovieAdapter(
-    private val clickAction: (Int) -> Unit,
+    private val clickAction: ((Int) -> Unit)? = null,
     private val mContext: Context?
 ) : ListAdapter<Movie, MovieAdapter.MovieViewHolder>(getMovieDiffUtils()) {
 
@@ -38,18 +38,18 @@ class MovieAdapter(
         holder: MovieViewHolder,
         position: Int
     ) {
-        getItem(position).let {
+        getItem(position).let { movie ->
             holder.view.apply {
-                textTitle.text = it.title
+                textTitle.text = movie.title
                 imagePoster.loadImage(
-                    it.posterPath,
+                    movie.posterPath,
                     ImageQuality.LOW,
                     false, fitTop = false, isThumbnail = false,
                     errorImage = ContextCompat.getDrawable(mContext!!, R.drawable.ic_image_broken)
                 )
-                textRating.text = String.format("%.1f", it.voteAverage)
+                textRating.text = String.format("%.1f", movie.voteAverage)
                 holder.view.layoutMovie.setSafeOnClickListener {
-                    clickAction(it.id)
+                    clickAction?.invoke(movie.id)
                 }
             }
         }

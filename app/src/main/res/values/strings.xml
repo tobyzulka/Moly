@@ -16,4 +16,6 @@
     <string name="trailers">Trailers</string>
     <string name="images">Images</string>
     <string name="reviews">Reviews</string>
+    <string name="message_no_review">No reviews have been submitted yet</string>
+    <string name="message_no_image">Has no image displayed</string>
 </resources>

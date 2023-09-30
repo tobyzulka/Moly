@@ -90,7 +90,8 @@
                 android:id="@+id/rating_bar"
                 style="@style/RatingBar"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                tools:rating="4"/>
             <TextView
                 android:id="@+id/text_rating"
                 android:layout_width="wrap_content"
@@ -136,18 +137,22 @@
             tools:text="25 April 2022"
             tools:ignore="SpUsage"/>
 
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/cg_genres"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:layout_marginEnd="2dp"
-            android:layout_marginBottom="24dp"
-            app:layout_constraintBottom_toBottomOf="@+id/image_card"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/image_card"
-            app:layout_constraintTop_toBottomOf="@+id/text_release_date" />
+            app:layout_constraintTop_toBottomOf="@+id/text_release_date">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cg_genres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:chipSpacingVertical="2dp"/>
+        </LinearLayout>
 
         <TextView
             android:id="@+id/heading_overview"
@@ -203,6 +208,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/heading_trailer"
             tools:listitem="@layout/item_video"/>
@@ -230,36 +236,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/heading_cast"
             tools:listitem="@layout/item_person"/>
 
-        <TextView
-            android:id="@+id/heading_image"
-            style="@style/TextAppearance.AppCompat.Headline"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:lines="1"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="16dp"
-            android:ellipsize="end"
-            android:textSize="18dp"
-            android:text="@string/images"
-            app:layout_constraintTop_toBottomOf="@id/rv_cast"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="SpUsage" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="4dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintTop_toBottomOf="@id/heading_image"
-            tools:listitem="@layout/item_image"/>
 
         <TextView
             android:id="@+id/heading_review"
@@ -273,7 +254,7 @@
             android:ellipsize="end"
             android:textSize="18dp"
             android:text="@string/reviews"
-            app:layout_constraintTop_toBottomOf="@id/rv_image"
+            app:layout_constraintTop_toBottomOf="@id/rv_cast"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:ignore="SpUsage" />
@@ -284,9 +265,64 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_constraintTop_toBottomOf="@id/heading_review"
             tools:listitem="@layout/item_review"/>
+
+        <TextView
+            android:id="@+id/label_no_review"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/message_no_review"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_reviews"/>
+
+        <TextView
+            android:id="@+id/heading_image"
+            style="@style/TextAppearance.AppCompat.Headline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:lines="1"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="16dp"
+            android:ellipsize="end"
+            android:textSize="18dp"
+            android:text="@string/images"
+            app:layout_constraintTop_toBottomOf="@id/label_no_review"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="SpUsage" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_image"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/heading_image"
+            tools:listitem="@layout/item_image"/>
+
+        <TextView
+            android:id="@+id/label_no_image"
+            style="@style/TextAppearance.AppCompat.Body1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:text="@string/message_no_image"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/rv_image"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

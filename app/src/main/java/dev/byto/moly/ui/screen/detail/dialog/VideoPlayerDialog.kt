@@ -5,6 +5,7 @@ import android.app.AlertDialog
 import android.app.Dialog
 import android.content.DialogInterface
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDialogFragment
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -16,18 +17,17 @@ import dev.byto.moly.R
 import dev.byto.moly.databinding.VideoDialogBinding
 
 @AndroidEntryPoint
-class VideoPlayerDialog(videoId: String) : AppCompatDialogFragment(R.layout.video_dialog) {
-
-    private val binding: VideoDialogBinding by viewBinding()
+class VideoPlayerDialog(videoId: String) : AppCompatDialogFragment() {
+    private var binding: VideoDialogBinding? = null
     private val videoId: String
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-//        binding = VideoDialogBinding.inflate(LayoutInflater.from(context))
+        binding = VideoDialogBinding.inflate(LayoutInflater.from(context))
         val builder = AlertDialog.Builder(context)
-        builder.setView(binding.root)
-        lifecycle.addObserver(binding.youtubePlayer)
-        binding.youtubePlayer.addYouTubePlayerListener(
+        builder.setView(binding!!.root)
+        lifecycle.addObserver(binding!!.youtubePlayer)
+        binding!!.youtubePlayer.addYouTubePlayerListener(
             object : AbstractYouTubePlayerListener() {
                 override fun onError(youTubePlayer: YouTubePlayer, error: PlayerConstants.PlayerError) {
                     super.onError(youTubePlayer, error)
@@ -45,7 +45,7 @@ class VideoPlayerDialog(videoId: String) : AppCompatDialogFragment(R.layout.vide
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-        binding.youtubePlayer.release()
+        binding!!.youtubePlayer.release()
     }
 
     init {

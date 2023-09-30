@@ -1,10 +1,7 @@
 package dev.byto.moly.ui.screen.list
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.core.view.forEach
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,9 +11,9 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.byto.moly.R
 import dev.byto.moly.databinding.FragmentViewAllBinding
@@ -35,6 +32,7 @@ class ViewAllFragment : Fragment(R.layout.fragment_view_all) {
     private val viewModel: ViewAllViewModel by viewModels()
 
     private lateinit var adapterMovies: MovieAdapter
+    private var snackbar: Snackbar? = null
 
     private var genreId: Int? = null
     private var genreName: String? = null
@@ -72,8 +70,7 @@ class ViewAllFragment : Fragment(R.layout.fragment_view_all) {
             rvMovies.layoutManager =
                 GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false)
             rvMovies.setAdapterWithFixedSize(adapterMovies, true)
-            rvMovies.addInfiniteScrollListener()
-//            loadMoreOnRecyclerView(rvMovies)
+            loadMoreOnRecyclerView(rvMovies)
         }
     }
 
@@ -83,33 +80,6 @@ class ViewAllFragment : Fragment(R.layout.fragment_view_all) {
                 super.onScrolled(recyclerView, dx, dy)
                 if (!recyclerView.canScrollVertically(1) && dy != 0) {
                     viewModel.onLoadMore()
-                }
-            }
-        })
-    }
-
-    private fun RecyclerView.addInfiniteScrollListener() {
-        addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            private val layoutManagerType = layoutManager as GridLayoutManager
-            private val visibleThreshold = 10
-            private var loading = true
-            private var previousTotal = 0
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                val visibleItemCount = layoutManagerType.childCount
-                val totalItemCount = layoutManagerType.itemCount
-                val firstVisibleItem = layoutManagerType.findFirstVisibleItemPosition()
-
-                if (totalItemCount < previousTotal) previousTotal = 0
-
-                if (loading && totalItemCount > previousTotal) {
-                    loading = false
-                    previousTotal = totalItemCount
-                }
-
-                if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                    viewModel.onLoadMore()
-                    loading = true
                 }
             }
         })
@@ -130,8 +100,9 @@ class ViewAllFragment : Fragment(R.layout.fragment_view_all) {
 
     private suspend fun collectUiState() {
         viewModel.uiState.collect { state ->
-            if (state.isError) {
-                Toast.makeText(context, state.errorText, Toast.LENGTH_SHORT).show()
+            if (state.isError) showSnackbar(
+                message = state.errorText!!, actionText = getString(R.string.retry)
+            ) {
                 viewModel.retryConnection {
                     viewModel.initRequests(genreId)
                 }
@@ -158,5 +129,28 @@ class ViewAllFragment : Fragment(R.layout.fragment_view_all) {
                 }
             }
         }
+    }
+
+    private fun showSnackbar(
+        message: String,
+        indefinite: Boolean = true,
+        actionText: String? = null,
+        anchor: Boolean = false,
+        action: (() -> Unit)? = null
+    ) {
+        val view = activity?.window?.decorView?.rootView
+        val length = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
+        val snackbar = view?.let { Snackbar.make(it, message, length) }
+
+        if (action != null) snackbar?.setAction(actionText) { action() }
+        if (anchor) snackbar?.setAnchorView(R.id.nav_view)
+
+        this.snackbar = snackbar
+        this.snackbar?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        this.snackbar?.dismiss()
     }
 }

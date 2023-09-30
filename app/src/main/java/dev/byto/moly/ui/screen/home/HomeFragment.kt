@@ -4,7 +4,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -14,6 +13,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import dev.byto.moly.R
 import dev.byto.moly.databinding.FragmentHomeBinding
@@ -32,6 +32,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val viewModel: HomeViewModel by viewModels()
 
     private var adapterGenres: GenreAdapter = GenreAdapter(::clickAction)
+
+    private var snackbar: Snackbar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -76,8 +78,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private suspend fun collectUiState() {
         viewModel.uiState.collect { state ->
-            if (state.isError) {
-                Toast.makeText(context, state.errorText, Toast.LENGTH_SHORT).show()
+            if (state.isError) showSnackbar(
+                message = state.errorText!!, actionText = getString(R.string.retry)
+            ) {
                 viewModel.retryConnection {
                     viewModel.initRequests()
                 }
@@ -95,5 +98,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         }
+    }
+
+    private fun showSnackbar(
+        message: String,
+        indefinite: Boolean = true,
+        actionText: String? = null,
+        anchor: Boolean = false,
+        action: (() -> Unit)? = null
+    ) {
+        val view = activity?.window?.decorView?.rootView
+        val length = if (indefinite) Snackbar.LENGTH_INDEFINITE else Snackbar.LENGTH_LONG
+        val snackbar = view?.let { Snackbar.make(it, message, length) }
+
+        if (action != null) snackbar?.setAction(actionText) { action() }
+        if (anchor) snackbar?.setAnchorView(R.id.nav_view)
+
+        this.snackbar = snackbar
+        this.snackbar?.show()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        this.snackbar?.dismiss()
     }
 }

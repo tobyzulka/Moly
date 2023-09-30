@@ -39,10 +39,13 @@ class ReviewAdapter(
                     review.authorDetails.avatarPath,
                     ImageQuality.LOW,
                     circleCrop = true, fitTop = false, isThumbnail = false,
-                    errorImage = ContextCompat.getDrawable(mContext!!, R.drawable.ic_movie_creation)
+                    errorImage = ContextCompat.getDrawable(mContext!!, R.drawable.ic_person)
                 )
                 textCreatedDate.text = review.createdAt.formatDate()
-                val rate = "%.1f".format(review.authorDetails.rating)
+                var rate: String? = "0"
+                if (review.authorDetails.rating != null) {
+                    rate = String.format("%.1f", review.authorDetails.rating)
+                }
                 textRating.text = rate
                 textComment.text = review.content
             }

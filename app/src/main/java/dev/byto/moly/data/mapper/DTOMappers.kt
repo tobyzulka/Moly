@@ -90,9 +90,7 @@ fun GenreDTO.toGenre(): Genre = Genre(
 
 fun ImageListDTO.toImageList(): ImageList = ImageList(
     backdrops = backdrops?.map { it.toImage() },
-    posters = posters?.map { it.toImage() },
-    profiles = profiles?.map { it.toImage() },
-    stills = stills?.map { it.toImage() }
+    posters = posters?.map { it.toImage() }
 )
 
 fun ImageDTO.toImage(): Image = Image(

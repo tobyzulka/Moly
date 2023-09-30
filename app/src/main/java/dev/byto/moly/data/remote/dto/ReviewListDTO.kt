@@ -32,7 +32,7 @@ data class AuthorDTO(
 	@SerializedName("name")
 	val name: String?,
 	@SerializedName("rating")
-	val rating: Int?,
+	val rating: Double?,
 	@SerializedName("username")
 	val username: String?
 )
